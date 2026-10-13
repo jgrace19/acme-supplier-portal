@@ -65,3 +65,4 @@ input:focus{outline:2px solid #9FD8D3;border-color:var(--teal)}
 .login-foot{color:#BFD7EA;font-size:12px;text-align:center;padding:16px}
 .login-foot a{color:#fff}
 @media (max-width:860px){.grid{grid-template-columns:1fr}.nav{overflow-x:auto}}
+.invite-banner{background:#E8F1FB;border-bottom:1px solid #B9D3F0;color:#1E3A5F;font-size:13px;padding:7px 24px;text-align:center}

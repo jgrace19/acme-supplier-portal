@@ -16,6 +16,21 @@
   function page() { return (location.pathname.split("/").pop() || "index.html") + (location.hash || ""); }
 
   var body = document.body;
+
+  // Supplier invitation link: ?invite=<token> signs the invited supplier in (same session storage as normal sign-in)
+  var INVITE_TOKEN = "NB-2026-117-7Q4K";
+  var INVITE_USER = "bids@northbeam.example";
+  var params = new URLSearchParams(location.search);
+  if (params.has("invite")) {
+    var token = params.get("invite");
+    params.delete("invite");
+    var q = params.toString();
+    try { history.replaceState(null, "", location.pathname + (q ? "?" + q : "") + location.hash); } catch (e) {}
+    if (token === INVITE_TOKEN) {
+      write({ user: INVITE_USER, org: ORG, via: "invitation", signedInAt: new Date().toISOString() });
+    }
+  }
+
   var session = read();
 
   if (body.getAttribute("data-auth") === "required" && !session) {
@@ -45,6 +60,14 @@
   // Populate user details
   if (!session) {
     document.querySelectorAll(".userbox").forEach(function (el) { el.innerHTML = '<a href="index.html">Supplier sign in</a>'; });
+  }
+  if (session && session.via === "invitation") {
+    var bar = document.createElement("div");
+    bar.className = "invite-banner";
+    bar.setAttribute("role", "status");
+    bar.textContent = "Signed in via supplier invitation \u2014 " + session.user;
+    var anchor = document.querySelector("main") || body.firstChild;
+    anchor.parentNode.insertBefore(bar, anchor);
   }
   if (session) {
     document.querySelectorAll("[data-user]").forEach(function (el) { el.textContent = session.user; });
